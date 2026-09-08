@@ -59,7 +59,7 @@ export default function StandManager({ children }: Props) {
     const selectInteraction = new Select({
       style: new Style({
         image: new Icon({
-          src: "/rnd.png",
+          src: "./rnd.png",
           anchor: [0.5, 0.5],
           scale: 0.03,
         }),
@@ -82,7 +82,7 @@ export default function StandManager({ children }: Props) {
       source: source,
       style: new Style({
         image: new Icon({
-          src: "/rnd.png",
+          src: "./rnd.png",
           anchor: [0.5, 0.5],
           scale: 0.02,
         }),
