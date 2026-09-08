@@ -8,9 +8,9 @@ export default function Overlay() {
   const mapManager = useContext(MapManagerContext);
   const [hidden, setHidden] = useState(false);
 
-  useEffect(() => {
-    mapManager.init();
-  }, [mapManager]);
+  // useEffect(() => {
+  //   mapManager.init();
+  // }, [mapManager]);
 
   return (
     <div
@@ -20,7 +20,7 @@ export default function Overlay() {
       }
     >
       <button
-        className="fixed -translate-x-5 top-3 bg-white text-yellow-400 rounded-full w-6 h-6 text-center cursor-pointer"
+        className="fixed -translate-x-6 top-3 bg-white text-yellow-400 rounded-full w-7 h-7 text-center cursor-pointer"
         onClick={() => setHidden((hidden) => !hidden)}
       >
         <FontAwesomeIcon icon={hidden ? faAnglesLeft : faAnglesRight} />
@@ -42,11 +42,11 @@ export default function Overlay() {
           >
             <div className="text-lg">{d.project}</div>
             <p>
-              location: {d.location}
+              {d.location}
               <br />
-              status: {d.status}
+              {d.status}
               <br />
-              capacity: {d.capacity}
+              {d.capacity}
             </p>
           </div>
         ))}

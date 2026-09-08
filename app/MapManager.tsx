@@ -1,4 +1,4 @@
-import { createContext, useRef, useState } from "react";
+import { createContext, useEffect, useRef, useState } from "react";
 import Map from "ol/Map";
 import View from "ol/View";
 import TileLayer from "ol/layer/Tile";
@@ -110,12 +110,11 @@ export default function StandManager({ children }: Props) {
         layer,
       ],
       view: new View({
-        center: fromLonLat([15.800, 47.762]),
+        center: fromLonLat([15.8, 47.762]),
         zoom: 9,
       }),
     });
 
-    selectInteraction.setProperties({ name: "select" });
     map.addInteraction(selectInteraction);
 
     mapRef.current = map;
@@ -136,31 +135,30 @@ export default function StandManager({ children }: Props) {
   const select: SelectFunc = (id) => {
     if (!mapRef.current) return;
 
-    const layers = mapRef.current.getLayers();
+    const layers = mapRef.current.getLayers().getArray();
+    const layer = layers.find(
+      (l) => l.getProperties().name === "layer",
+    ) as VectorLayer;
+    if (!layer) return;
+    const source = layer.getSource();
+    if (!source) return;
+    const features = source.getFeatures();
+    const feature = features.find((f) => f.getProperties().id === id);
+    if (!feature) return;
 
-    layers.forEach((layer) => {
-      const prop = layer.getProperties();
-      if (prop.name === "layer") {
-        const myLayer = layer as VectorLayer;
-        const source = myLayer.getSource();
-        if (!source) return;
-        const features = source.getFeatures();
+    const interactions = mapRef.current.getInteractions().getArray();
+    const selectInteraction = interactions.find(
+      (l) => l instanceof Select,
+    ) as Select;
+    if (!selectInteraction) return;
 
-        const feature = features.find((f) => f.getProperties().id === id);
-
-        if (!mapRef.current) return;
-        const interactions = mapRef.current.getInteractions();
-
-        interactions.forEach((interaction) => {
-          const prop = interaction.getProperties();
-          if (prop.name === "select") {
-            const selectInteraction = interaction as Select;
-            selectInteraction.selectFeature(feature);
-          }
-        });
-      }
-    });
+    selectInteraction.clearSelection();
+    selectInteraction.selectFeature(feature);
   };
+
+  useEffect(() => {
+    init();
+  }, []);
 
   return (
     <MapManagerContext
@@ -171,6 +169,7 @@ export default function StandManager({ children }: Props) {
         selected,
       }}
     >
+      <div className="fixed w-full h-full" id="map"></div>
       {children}
     </MapManagerContext>
   );
